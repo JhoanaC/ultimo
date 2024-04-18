@@ -1,7 +1,7 @@
 name: CD-CI Jhoana
 
-env:
-  AZURE_WEBAPP_NAME: "abifinal-abit"
+#env:
+#  AZURE_WEBAPP_NAME: "abifinal-abit"
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
       uses: actions/checkout@v4
 
       
-    - name: Use Node.js 20.x
+    - name: Use Node.js
       uses: actions/setup-node@v4
       with:
         node-version: "20.x"
@@ -33,9 +33,6 @@ jobs:
     - name: Run unit and integration test
       run: npm run test
 
-    - name: Run code laster
-      run: npm run last
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -44,7 +41,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to Docker Hub
-        run: docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASSWORD }}"
+        uses: docker/login-actions@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -56,26 +57,4 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ESTE API-POC=LASTEST
 
-  deploys:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-    # Clona el código del repositorio
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    # Inicia sesión en Azure con las credenciales proporcionadas como secretos
-    - name: Login to Azure
-      uses: azure/login@v3
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
   
-    # Despliega la imagen de Docker en Azure Web App
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v3
-      id: deploy-to-webapp
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        image: ${{ secrets.DOCKERHUB_USERNAME }}/API-POC=LASTEST
