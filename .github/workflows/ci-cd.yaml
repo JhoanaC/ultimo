@@ -50,7 +50,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/final_work1.3:latest
 
-  
   CI_CD_success_notification:
     needs: [test, build]
     runs-on: ubuntu-latest
