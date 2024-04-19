@@ -5,7 +5,7 @@ on:
     branches:  [main, develop, feature/azure, feature/Slack]
   pull_request:
     branches: [main, develop, feature/azure, feature/Slack]
-
+    
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -48,7 +48,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/final_work1.3:latest
 
   deploys:
     runs-on: ubuntu-lastest 
