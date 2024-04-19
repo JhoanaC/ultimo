@@ -79,4 +79,4 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: 'Jhoana Coronel'
+          SLACK_MESSAGE: 'Jhoana Coronel, Carlos Rodriguez, Jesus Sanchez'
