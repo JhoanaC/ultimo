@@ -37,16 +37,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Clear action cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.github/actions
-          key: ${{ runner.os }}-actions-${{ hashFiles('**/action.yml') }}
-          run: rm -rf ${{ inputs.path }}
-      
-
       - name: Login to Docker Hub
-        uses: docker/login-actions@v3
+        uses: ./
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
