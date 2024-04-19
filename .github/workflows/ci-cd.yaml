@@ -2,13 +2,9 @@ name: CD-CI Jhoana
 
 on:
   push:
-    branches:  
-      -  "main"
-      -  "develop"
+    branches:  [main, develop]
   pull_request:
-    branches:
-      - "main"
-      - "develop"
+    branches: [main, develop]
 
 jobs:
   test:
@@ -38,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to Docker Hub
-        uses: ./
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -52,6 +48,25 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ESTE API-POC=LASTEST
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/final_work1.3:latest
 
-  
+  deploys:
+    runs-on: ubuntu-lastest 
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: action/checkout@4
+
+      - name: Login  Azure
+        uses: azure/login@v3
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} 
+    
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }} 
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
