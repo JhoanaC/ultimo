@@ -2,9 +2,9 @@ name: CD-CI Jhoana
 
 on:
   push:
-    branches:  [main, develop, feature/azure]
+    branches:  [main, develop, feature/azure, feature/Slack]
   pull_request:
-    branches: [main, develop, feature/azure]
+    branches: [main, develop, feature/azure, feature/Slack]
 
 jobs:
   test:
@@ -71,3 +71,12 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }} 
           image: ${{ secrets.DOCKERHUB_USERNAME }}/final_work1.3:latest
 
+  CI_CD_success_notification:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify success on Slack
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: 'Jhoana Coronel'
