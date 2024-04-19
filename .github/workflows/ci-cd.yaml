@@ -1,77 +1,51 @@
 name: CD-CI Jhoana
 
-#env:
-# AZURE_WEBAPP_NAME: ""
 on:
   push:
-    branches:
-      
-  "main"
-  "develop"
+    branches:  [main, develop]
   pull_request:
-    branches:
-  "main"
-  "develop"
+    branches: [main, develop]
 
-  jobs:
-    test:
-      runs-on: ubuntu-latest
-      steps:
-        
-  name: Checkout code
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+      
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20.x"
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run unit and integration test
+      run: npm run test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
         uses: actions/checkout@v4
 
-        
-  name: Use Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          node-version: "20.x"
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-        
-  name: Install dependencies
-        run: npm install
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-        
-  name: Run unit and integration test
-        run: npm run test
-
-        
-  name: Run code laster
-        run: npm run last
-
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        -
-          name: Checkout
-          uses: actions/checkout@v4
-        -
-          name: Login to Docker Hub
-          uses: docker/login-actions@v3
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
-        -
-          name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3
-        -
-          name: Build and push
-          uses: docker/build-push-action@v5
-          with:
-            context: .
-            file: ./Dockerfile
-            push: true
-            tags: ${{ secrets.DOCKERHUB_USERNAME }}/ESTE API-POC=LASTEST
-    deploys:
-      runs-on: ubuntu-latest
-      needs: build
-
-      steps:
-      
-  name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v3
-      id: deploy-to-webapp
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }} # Define secret variable in repository settings as per action documentation
-        image: ${{ secrets.DOCKERHUB_USERNAME }}/API-POC=LASTEST
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/final_work1.3:latest
