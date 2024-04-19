@@ -2,15 +2,9 @@ name: CD-CI Jhoana
 
 on:
   push:
-
     branches:  [main, develop, feature/azure]
   pull_request:
     branches: [main, develop, feature/azure]
-
-    branches:  [main, develop]
-  pull_request:
-    branches: [main, develop]
-
 
 jobs:
   test:
