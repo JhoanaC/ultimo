@@ -69,4 +69,5 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }} 
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/final_work1.3:latest
+
